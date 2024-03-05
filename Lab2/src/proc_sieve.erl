@@ -72,4 +72,4 @@ generate(MaxN) ->
   end.
 
 
-result() -> io:format("~w~n", [generate(10)]).
+result() -> io:format("~w~n", [generate(1000)]).
