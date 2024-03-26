@@ -12,7 +12,7 @@
 -include("C:/Program Files/Erlang OTP/lib/inets-9.1/include/httpd.hrl").
 
 %% API
--export([result/0, is_rss2_feed/1, get_feed_items/2, get_item_time/1, compare_feed_items/2]).
+-export([result/0, is_rss2_feed/1, get_feed_items/2, get_item_time/1, compare_feed_items/2, display_items/1]).
 
 is_rss2_feed(Data) -> {R,_} = Data,
   if
@@ -29,7 +29,7 @@ get_feed_items(Record, List) -> if
                                   is_record(Record, xmlElement) ->
                                     if
                                       Record#xmlElement.name == item -> [Record|List];
-                                      true -> lists:foldl(fun get_feed_items/2, List, Record#xmlElement.content)
+                                      true -> lists:foldl(fun rss_parse:get_feed_items/2, List, Record#xmlElement.content)
                                     end;
                                   true -> List
                                 end.
@@ -89,6 +89,9 @@ build_unique_feed(Feed1Items, Feed2Items) ->
   L1 = lists:foldl(Func1,[],Feed1Items),
   L1U = Feed1Items -- L1,
   lists:sort(fun(Item1,Item2) -> get_item_time(Item1) < get_item_time(Item2) end, L1U ++ Feed2Items).
+
+display_items(RSSItems) -> DisplayItems = get_items_string(RSSItems),
+  io:format("Articles ~p:~n~p~n~n~n~n~n~n~n~n~n~n",[length(DisplayItems),DisplayItems]).
 
 result() -> RSS1 = xmerl_scan:file("digg-science-rss1.xml"), RSS2 = xmerl_scan:file("digg-science-rss2.xml"),
   Valid1 = is_rss2_feed(RSS1), Valid2 = is_rss2_feed(RSS2),
