@@ -14,10 +14,10 @@
 %% API
 -export([result/0, is_rss2_feed/1, get_feed_items/2, get_item_time/1, compare_feed_items/2, display_items/1]).
 
-is_rss2_feed(Data) -> {R,_} = Data,
+is_rss2_feed(Data) ->
   if
-    is_record(R, xmlElement) -> Func = fun({_, Name, _, _, _, _, _, _, Value, _}) -> Name == version andalso Value == "2.0" end,
-      Result = lists:filter(Func, R#xmlElement.attributes),
+    is_record(Data, xmlElement) -> Func = fun({_, Name, _, _, _, _, _, _, Value, _}) -> Name == version andalso Value == "2.0" end,
+      Result = lists:filter(Func, Data#xmlElement.attributes),
       if
         length(Result) == 1 -> true;
         true -> false
